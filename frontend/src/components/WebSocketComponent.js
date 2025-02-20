@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-
 function WebSocketComponent() {
     const [messages, setMessages] = useState([]);
     const [socket, setSocket] = useState(null);
@@ -21,11 +20,14 @@ function WebSocketComponent() {
     };
 
     return (
-        <div>
-            <button onClick={sendMessage}>Send Message</button>
-            <ul>
-                {messages.map((msg, index) => <li key={index}>{msg}</li>)}
-            </ul>
+        <div className="page">
+            <h1>🚀 Websocket test</h1>
+            <button onClick={sendMessage}>Test connection</button>
+            <div>
+                <ul>
+                    {messages.map((msg, index) => <li key={index}>{msg}</li>)}
+                </ul>
+            </div>
         </div>
     );
 }
