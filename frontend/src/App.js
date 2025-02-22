@@ -6,6 +6,7 @@ import WebSocketComponent from './components/WebSocketComponent.js'
 import Home from './components/Home.js';
 import './App.css'; // Import the CSS file
 import NotFound from './components/NotFound.js';
+import Rooms from './components/Rooms.js';
 
 function App() {
   return (
@@ -16,18 +17,19 @@ function App() {
             <Link to="/">Home</Link>
           </li>
           <li>
-            <Link to="/magic-8-ball">Magic8Ball</Link>
+            <Link to="/web-socket">WebSocket</Link>
           </li>
           <li>
-            <Link to="/web-socket">WebSocket</Link>
+            <Link to="/rooms">Rooms</Link>
           </li>
         </ul>
       </nav>
 
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/magic-8-ball" element={<Magic8Ball />} />
+        <Route path="/game/magic8ball" element={<Magic8Ball />} />
         <Route path="/web-socket" element={<WebSocketComponent />} />
+        <Route path="/rooms" element={<Rooms />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>

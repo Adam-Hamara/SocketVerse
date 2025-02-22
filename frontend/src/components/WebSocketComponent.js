@@ -19,10 +19,15 @@ function WebSocketComponent() {
         if (socket) socket.send("Hello from React!");
     };
 
+    const join = () => {
+        if (socket) socket.send("/join magic8ball");
+    }
+
     return (
         <div className="page">
             <h1>🚀 Websocket test</h1>
             <button onClick={sendMessage}>Test connection</button>
+            <button onClick={join}>Join</button>
             <div>
                 <ul>
                     {messages.map((msg, index) => <li key={index}>{msg}</li>)}

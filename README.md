@@ -19,6 +19,9 @@ A universe powered by WebSockets
 1. Open ```backend``` directory in IntelliJ IDEA
 2. In project tree open ```/src/main/java/com/socketverse/backend```
 3. Right click ```Application.java``` press green right-arrow ``` run 'Application.main()'``` to enable automatic configuration of the service
+#### To deploy selected only packages run  
+- ```./mvnw clean package -P games -D enabled.games=magic8ball,pioupiou```
+- where ```enabled.games=game1,game2,game3``` names of packages are defined in file ```pom.xml``` profiles
 ### Frontend
 1. Open command line or powershell
 2. ```cd /frontend```

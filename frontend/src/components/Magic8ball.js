@@ -25,7 +25,7 @@ function Magic8Ball() {
             const randomIndex = Math.floor(Math.random() * answers.length);
             setAnswer(answers[randomIndex]); // Set the new answer
             setLoading(false); // Hide loading message
-        }, 2000); // 2-second delay for suspense
+        }, Math.random() * 1500 + 500);
     };
 
     return (
