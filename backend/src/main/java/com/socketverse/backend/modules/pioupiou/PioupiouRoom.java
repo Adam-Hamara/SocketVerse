@@ -1,12 +1,13 @@
 package com.socketverse.backend.modules.pioupiou;
 
+import com.socketverse.backend.modules.IGameRoom;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class PioupiouRoom {
+public class PioupiouRoom implements IGameRoom {
 
     public static final int MAX_PLAYERS = 5;
     public static final int MIN_PLAYERS = 2;
@@ -48,15 +49,20 @@ public class PioupiouRoom {
         Collections.shuffle(deck);
     }
 
-
-    public void addPlayer(int id, String name, WebSocketSession session){
-        players.add(new PioupiouPlayer(id, name, session));
+    @Override
+    public void addPlayer(String name, WebSocketSession session){
+        players.add(new PioupiouPlayer(name, session));
     }
 
     public void action(){
 
     }
 
+
+    @Override
+    public String getName(){
+        return "PioupiouRoom";
+    }
 
 
 

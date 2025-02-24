@@ -1,8 +1,10 @@
 package com.socketverse.backend.handler;
 
 import com.socketverse.backend.modules.GameLoader;
-import com.socketverse.backend.modules.GameModule;
+import com.socketverse.backend.modules.IGameModule;
 import com.socketverse.backend.modules.GameHelper;
+import com.socketverse.backend.modules.IGameRoom;
+import com.socketverse.backend.modules.pioupiou.PioupiouRoom;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.lang.NonNull;
@@ -10,15 +12,17 @@ import org.springframework.web.socket.*;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 import org.springframework.stereotype.Component;
 import java.io.IOException;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class WebSocketHandler extends TextWebSocketHandler {
 
     private static final Logger log = LogManager.getLogger(WebSocketHandler.class);
-    private final Map<String, GameModule> activeGames;  // Active game modules
+    private final Map<String, IGameModule> activeGames;  // Active game modules
     private final Map<String, WebSocketSession> sessions = new ConcurrentHashMap<>();
+
+    private final Map<String, IGameRoom> activeRooms = new HashMap<>();
 
     public WebSocketHandler(GameLoader gameLoader) {
         this.activeGames = gameLoader.activeGames(); // Load active games
@@ -36,31 +40,61 @@ public class WebSocketHandler extends TextWebSocketHandler {
     protected void handleTextMessage(@NonNull WebSocketSession session, TextMessage message)  {
         String payload = message.getPayload();
         try {
-            // If the message is a join request, switch game context
-            if (payload.startsWith("/join ")) {
-                String gameId = payload.substring(6).trim();
-                if (activeGames.containsKey(gameId)) {
-                    session.sendMessage(new TextMessage("Joined " + gameId));
-                    session.getAttributes().put("gameId", gameId); // Store game selection
-                } else {
-                    session.sendMessage(new TextMessage("Game not available."));
-                }
-            }
-            else if (payload.equals("/rooms")) {
-                GameHelper handler = new GameHelper();
-                for(var gameId : activeGames.keySet()){
-                    handler.addRoom(activeGames.get(gameId));
-                }
-                session.sendMessage(new TextMessage( handler.toJsonString() ));
-            }
-            // If already in a game, forward message to the correct game handler
-            else {
+            if (payload.contains("/player_action ")){
                 String gameId = (String) session.getAttributes().get("gameId");
+                String action = payload.substring(8).trim();
                 if (gameId != null && activeGames.containsKey(gameId)) {
-                    activeGames.get(gameId).handleGameMessage(session, payload);
+                    activeGames.get(gameId).handleGameMessage(session, action);
                 } else {
                     session.sendMessage(new TextMessage("You must join a game first using: /join {gameName}"));
                 }
+            }
+            else if (payload.contains("/list_games")) {
+                session.sendMessage(new TextMessage( GameHelper.activeGamesToJson(activeGames) ));
+            }
+            else if (payload.contains("/list_rooms")) {
+                session.sendMessage(new TextMessage( GameHelper.activeRoomsToJson(activeRooms) ));
+            }
+            else if (payload.contains("/join_room")) {
+                String gameId = GameHelper.readString(payload);
+                if(gameId != null){
+                    var roomUuid = gameId.split(" ")[1];
+                    var name = gameId.split(" ")[2];
+
+                    if (activeRooms.containsKey(roomUuid)) {
+                        IGameRoom room = activeRooms.get(roomUuid);
+                        room.addPlayer(name, session);
+                        session.sendMessage(new TextMessage("Joined " + roomUuid));
+                    } else {
+                        session.sendMessage(new TextMessage("Room not available."));
+                    }
+                }
+                else{
+                    session.sendMessage(new TextMessage("Error incorrect format for: " + payload));
+                }
+            }
+            else if (payload.contains("/create_room")) {
+                String unpackedPayload = GameHelper.readString(payload);
+                if(unpackedPayload != null){
+                    var gameId = unpackedPayload.split(" ")[1];
+                    var name = unpackedPayload.split(" ")[2];
+
+                    if (activeGames.containsKey(gameId)) {
+                        String uuid = UUID.randomUUID().toString();
+                        activeRooms.put(uuid, GameHelper.resolveGameId(gameId));
+                        IGameRoom room = activeRooms.get(uuid);
+                        room.addPlayer(name, session);
+                        session.sendMessage(new TextMessage("Created room " + uuid));
+                    } else {
+                        session.sendMessage(new TextMessage("Game not available."));
+                    }
+                }
+                else{
+                    session.sendMessage(new TextMessage("Error incorrect format for: " + payload));
+                }
+            }
+            else {
+                session.sendMessage(new TextMessage("Error."));
             }
         }
         catch(IOException e){

@@ -8,15 +8,15 @@ import java.util.Map;
 
 @Component
 public class GameSocketController {
-    private final Map<String, GameModule> activeGames = new HashMap<>();
+    private final Map<String, IGameModule> activeGames = new HashMap<>();
 
-    public GameSocketController(List<GameModule> games) {
-        for (GameModule game : games) {
+    public GameSocketController(List<IGameModule> games) {
+        for (IGameModule game : games) {
             activeGames.put(game.getGameId(), game);
         }
     }
 
-    public GameModule getGame(String gameId) {
+    public IGameModule getGame(String gameId) {
         return activeGames.get(gameId);
     }
 }

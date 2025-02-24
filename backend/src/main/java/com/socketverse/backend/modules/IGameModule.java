@@ -3,7 +3,7 @@ package com.socketverse.backend.modules;
 import org.springframework.web.socket.WebSocketSession;
 import java.io.IOException;
 
-public interface GameModule {
+public interface IGameModule {
     String getGameName();
     String getGameId();
     void start();

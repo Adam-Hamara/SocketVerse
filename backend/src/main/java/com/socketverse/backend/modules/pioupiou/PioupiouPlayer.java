@@ -6,14 +6,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PioupiouPlayer {
-    public int id;
+    public String id;
     public String name;
     public List<String> cardsOnHand;
     public List<String> eggsInPossession;
     public WebSocketSession session;
 
-    public PioupiouPlayer(int id, String name, WebSocketSession session){
-        this.id = id;
+    public PioupiouPlayer(String name, WebSocketSession session){
+        this.id = session.getId();
         this.name = name;
         this.cardsOnHand = new ArrayList<>();
         this.eggsInPossession = new ArrayList<>();

@@ -1,8 +1,6 @@
 package com.socketverse.backend.modules.magic8ball;
 
-import com.socketverse.backend.modules.GameModule;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.context.annotation.Profile;
+import com.socketverse.backend.modules.IGameModule;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -10,7 +8,7 @@ import org.springframework.web.socket.WebSocketSession;
 import java.io.IOException;
 
 @Component
-public class Magic8ballModule implements GameModule {
+public class Magic8ballModule implements IGameModule {
 
     @Override
     public String getGameName() {

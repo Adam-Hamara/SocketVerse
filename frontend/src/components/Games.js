@@ -1,46 +1,45 @@
 import React, { useEffect, useState } from "react";
 import webSocketService from "../service/WebSocketService";
-function Rooms() {
-    const [rooms, setRooms] = useState([]);
+function Games() {
+    const [games, setGames] = useState([]);
 
     useEffect(() => {
-
         const messageHandler = (message) => {
             const rooms = []
             const roomsArray = JSON.parse(message);
             for(var room of roomsArray){
                 rooms.push(room)
             }
-            setRooms(rooms);
+            setGames(rooms);
         };
 
-        webSocketService.addListener("rooms", messageHandler);
+        webSocketService.addListener("games", messageHandler);
 
-        webSocketService.send('/list_rooms')
+        webSocketService.send('/list_games')
 
         return () => {
-            webSocketService.removeListener("rooms");
+            webSocketService.removeListener("games");
         };
         
     }, []);
 
     return (
         <div className="page">
-            <h1>Rooms</h1>
+            <h1>Games</h1>
 
-            { rooms.length > 0 ? 
+            { games.length > 0 ? 
                 (
                     <ul>
-                        { rooms.map((room, index) => (
-                            <a href={`/game/${room.gameId}`}> 
-                                <p key={index}>{room.gameName}</p> 
+                        { games.map((game, index) => (
+                            <a href={`/game/${game.gameId}`}> 
+                                <p key={index}>{game.gameName}</p> 
                             </a>
                         ))}
                         
                     </ul>
                 ) : 
                 (
-                    <p>Loading rooms...</p>
+                    <p>Loading games...</p>
                 )
             }
             
@@ -48,4 +47,4 @@ function Rooms() {
     );
 }
 
-export default Rooms;
+export default Games;
