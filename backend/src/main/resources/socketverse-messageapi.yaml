@@ -1,0 +1,361 @@
+openapi: 3.0.4
+info:
+  title: SocketVerse - Message app API
+  description: |-
+    Backend API for Message app
+  version: 1.0.12
+servers:
+  - url: http://localhost:8000/SocketVerse
+tags:
+  - name: chats
+    description: Chats interaction API
+  - name: messages
+    description: Messages interaction API
+  - name: users
+    description: Users interaction API
+paths:
+  /chats:
+    post:
+      tags:
+        - chats
+      summary: Create new chat.
+      description: Create new chat to start new conversation.
+      operationId: createChat
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Chat'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Chat'
+        '400':
+          description: Invalid input
+        '401':
+          description: Unauthorized
+    get:
+      tags:
+        - chats
+      summary: Get all chats for a user.
+      description: Get all chats based on userId
+      operationId: getAllChats
+      parameters:
+        - name: email
+          in: query
+          description: User ID to return the chats to
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Chat'
+        '400':
+          description: Invalid status value
+        '401':
+          description: Unauthorized
+    put:
+      tags:
+        - chats
+      summary: Update existing chat.
+      description: Update existing chat with Id.
+      operationId: updateChat
+      parameters:
+        - name: email
+          in: query
+          description: Chat ID to return the chat
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Chat'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Chat'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
+        '422':
+          description: Validation exception
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /messages/{chatId}:
+    post:
+      tags:
+        - messages
+      summary: Create message for chat.
+      description: Create simple message that will be broadcasted via websockets.
+      operationId: createMessage
+      parameters:
+        - name: chatId
+          in: path
+          description: Chat ID corresponding to a chat
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Create message object for chat
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Message'
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid status value
+        '401':
+          description: Unauthorized
+
+    get:
+      tags:
+        - messages
+      summary: get message from chat.
+      description: Get message that will be broadcasted via websockets.
+      operationId: getMessage
+      parameters:
+        - name: chatId
+          in: path
+          description: Chat ID corresponding to a chat
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Message'
+        '400':
+          description: Invalid status value
+        '401':
+          description: Unauthorized
+
+    put:
+      tags:
+        - messages
+      summary: Update message for chat.
+      description: Update simple message that will be broadcasted via websockets.
+      operationId: updateMessage
+      parameters:
+        - name: chatId
+          in: path
+          description: Chat ID corresponding to a chat
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Create message object for chat
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Message'
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid status value
+        '401':
+          description: Unauthorized
+
+  /users:
+    post:
+      tags:
+        - users
+      summary: Add user to DB.
+      description: Create new user in Database.
+      operationId: createUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebsocketSession'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid input
+        '401':
+          description: Unauthorized
+    get:
+      tags:
+        - users
+      summary: Get user using his email.
+      description: Get user using his email.
+      operationId: getUserByEmail
+      parameters:
+        - name: email
+          in: query
+          description: Email to identify user with
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid status value
+        '401':
+          description: Unauthorized
+    put:
+      tags:
+        - users
+      summary: Update existing user.
+      description: Update existing user using thier email.
+      operationId: updateUser
+      parameters:
+        - name: email
+          in: query
+          description: Email to identify user with
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
+        '422':
+          description: Validation exception
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    User:
+      type: object
+      required:
+        - email
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        firstname:
+          type: string
+        lastname:
+          type: string
+        email:
+          type: string
+        avatar_url:
+          type: string
+    Chat:
+      type: object
+      required:
+        - type
+        - name
+        - participants
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [DIRECT, GROUP]
+        name:
+          type: string
+        participants:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    Message:
+      type: object
+      required:
+        - chat_id
+        - sender_id
+        - type
+        - content
+      properties:
+        id:
+          type: string
+        chat_id:
+          type: string
+        sender_id:
+          type: string
+        type:
+          type: string
+          enum: [TEXT, IMAGE, VIDEO, SYSTEM]
+        content:
+          type: string
+        media_url:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum: [SENT, DELIVERED, READ]
+    WebsocketSession:
+      type: object
+      properties:
+        session:
+          type: string
+
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+        - code
+        - message
