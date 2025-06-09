@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface IUserService {
     WebsocketSession createUser(User user);
-    UserEntity getUser(String userId);
-    void updateUser(String userId, User user);
+    UserEntity getUser(String uniqueId);
+    List<UserEntity> getAllUsers();
+    void updateUser(User user);
 }

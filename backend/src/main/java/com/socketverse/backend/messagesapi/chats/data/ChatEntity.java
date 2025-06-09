@@ -1,16 +1,13 @@
 package com.socketverse.backend.messagesapi.chats.data;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonValue;
+import com.socketverse.backend.helper.SecureRandomGenerator;
 import com.socketverse.backend.messagesapi.users.data.UserEntity;
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.Getter;
 import org.openapitools.model.Chat;
-import org.openapitools.model.User;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -21,6 +18,9 @@ public class ChatEntity {
     @JsonProperty(value = "id")
     private Long id;
 
+    @JsonProperty(value = "unique_id")
+    private String uniqueId;
+
     @Enumerated(EnumType.STRING)
     @JsonProperty(value = "type")
     private Chat.TypeEnum type;
@@ -28,7 +28,7 @@ public class ChatEntity {
     @JsonProperty(value = "name")
     private String name;
 
-    @OneToMany
+    @ManyToMany
     @JsonProperty(value = "participants")
     private List<UserEntity> participants;
 
@@ -41,6 +41,7 @@ public class ChatEntity {
     public ChatEntity(){}
 
     public ChatEntity(Chat chat, List<UserEntity> users){
+        this.uniqueId = SecureRandomGenerator.generateSecureUUID().toString();
         this.type = chat.getType();
         this.name = chat.getName();
         this.participants = users;

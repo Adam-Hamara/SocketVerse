@@ -1,5 +1,6 @@
 package com.socketverse.backend.messagesapi.users.services;
 
+import com.socketverse.backend.advice.BadRequestException;
 import com.socketverse.backend.messagesapi.chats.models.ChatRepository;
 import com.socketverse.backend.messagesapi.users.data.UserEntity;
 import com.socketverse.backend.messagesapi.users.models.UserRepository;
@@ -10,7 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class UserService implements IUserService {
@@ -28,12 +32,18 @@ public class UserService implements IUserService {
 
     @Override
     public UserEntity getUser(String email) {
-        return repository.findUserByEmail(email).orElseThrow();
+        return repository.findByEmail(email).orElse(null);
     }
 
     @Override
-    public void updateUser(String email, User user) {
-        UserEntity u = repository.findUserByEmail(email).orElseThrow();
+    public List<UserEntity> getAllUsers() {
+        Iterable<UserEntity> iterable = repository.findAll();
+        return StreamSupport.stream(iterable.spliterator(), false).toList();
+    }
+
+    @Override
+    public void updateUser(User user) {
+        UserEntity u = repository.findByUniqueId(user.getUniqueId()).orElseThrow();
         u.setUsername(user.getUsername());
         u.setAvatarUrl(user.getAvatarUrl());
         repository.save(u);

@@ -8,5 +8,5 @@ import java.util.List;
 public interface IChatService {
     void createNewChat(Chat chat);
     List<ChatEntity> getAllChats(String userId);
-    void updateChat(String chatId, Chat chat);
+    void updateChat(Chat chat);
 }

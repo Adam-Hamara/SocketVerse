@@ -1,6 +1,7 @@
 package com.socketverse.backend.messagesapi.messages.data;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.socketverse.backend.helper.SecureRandomGenerator;
 import com.socketverse.backend.messagesapi.chats.data.ChatEntity;
 import com.socketverse.backend.messagesapi.users.data.UserEntity;
 import jakarta.persistence.*;
@@ -17,6 +18,9 @@ public class MessageEntity {
     @GeneratedValue
     @JsonProperty(value = "id")
     private Long id;
+
+    @JsonProperty(value = "unique_id")
+    private String uniqueId;
 
     @OneToOne
     @JsonProperty(value = "chat")
@@ -46,6 +50,7 @@ public class MessageEntity {
     public MessageEntity(){}
 
     public MessageEntity(Message message, ChatEntity chat, UserEntity sender){
+        this.uniqueId = SecureRandomGenerator.generateSecureUUID().toString();
         this.chat = chat;
         this.sender = sender;
         this.type = message.getType();

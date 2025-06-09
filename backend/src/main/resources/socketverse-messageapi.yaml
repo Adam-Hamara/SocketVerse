@@ -7,13 +7,101 @@ info:
 servers:
   - url: http://localhost:8000/SocketVerse
 tags:
+  - name: users
+    description: Users interaction API
   - name: chats
     description: Chats interaction API
   - name: messages
     description: Messages interaction API
-  - name: users
-    description: Users interaction API
 paths:
+  /users:
+    post:
+      tags:
+        - users
+      summary: Add user to DB.
+      description: Create new user in Database.
+      operationId: createUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebsocketSession'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid input
+        '401':
+          description: Unauthorized
+    get:
+      tags:
+        - users
+      summary: Get user using his email.
+      description: Get user using his email.
+      operationId: getUserByEmail
+      parameters:
+        - name: email
+          in: query
+          description: Email to identify user with
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid status value
+        '401':
+          description: Unauthorized
+    put:
+      tags:
+        - users
+      summary: Update existing user.
+      description: Update existing user using thier email.
+      operationId: updateUser
+      parameters:
+        - name: email
+          in: query
+          description: Email to identify user with
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
+        '422':
+          description: Validation exception
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
   /chats:
     post:
       tags:
@@ -133,9 +221,9 @@ paths:
     get:
       tags:
         - messages
-      summary: get message from chat.
-      description: Get message that will be broadcasted via websockets.
-      operationId: getMessage
+      summary: Get last 20 messages from chat.
+      description: Get last 20 message that will be broadcasted via http.
+      operationId: getMessages
       parameters:
         - name: chatId
           in: path
@@ -184,102 +272,14 @@ paths:
         '401':
           description: Unauthorized
 
-  /users:
-    post:
-      tags:
-        - users
-      summary: Add user to DB.
-      description: Create new user in Database.
-      operationId: createUser
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/WebsocketSession'
-        required: true
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-        '400':
-          description: Invalid input
-        '401':
-          description: Unauthorized
-    get:
-      tags:
-        - users
-      summary: Get user using his email.
-      description: Get user using his email.
-      operationId: getUserByEmail
-      parameters:
-        - name: email
-          in: query
-          description: Email to identify user with
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/User'
-        '400':
-          description: Invalid status value
-        '401':
-          description: Unauthorized
-    put:
-      tags:
-        - users
-      summary: Update existing user.
-      description: Update existing user using thier email.
-      operationId: updateUser
-      parameters:
-        - name: email
-          in: query
-          description: Email to identify user with
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-        required: true
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-        '400':
-          description: Invalid ID supplied
-        '404':
-          description: Pet not found
-        '422':
-          description: Validation exception
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
 components:
   schemas:
     User:
       type: object
       required:
-        - email
+        - unique_id
       properties:
-        id:
+        unique_id:
           type: string
         username:
           type: string
@@ -295,10 +295,9 @@ components:
       type: object
       required:
         - type
-        - name
         - participants
       properties:
-        id:
+        unique_id:
           type: string
         type:
           type: string
@@ -323,7 +322,7 @@ components:
         - type
         - content
       properties:
-        id:
+        unique_id:
           type: string
         chat_id:
           type: string

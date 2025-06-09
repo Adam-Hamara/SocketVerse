@@ -1,0 +1,33 @@
+<header class="app-header">
+  <div class="logo" routerLink="/home">
+    <img src="assets/icons/app-icon.png" alt="Logo" />
+    <span>SocketVerse</span>
+  </div>
+
+  <nav class="nav-links">
+    <a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Home</a>
+    <a routerLink="/chats" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Chats</a>
+    <a routerLink="/about" routerLinkActive="active">About</a>
+    <!-- Add more links as needed -->
+  </nav>
+  
+  <div class="account-section" (click)="toggleAccountMenu()" tabindex="0">
+  <div class="user-avatar">
+    <span>AH</span>
+  </div>
+  <span class="username">My Account</span>
+  
+  <div class="account-dropdown" *ngIf="accountMenuOpen">
+    <button (click)="logout(); $event.stopPropagation()">Logout</button>
+    <!-- Add more options if needed -->
+  </div>
+</div>
+</header>
+
+<main class="app-content">
+  <router-outlet></router-outlet>
+</main>
+
+<footer class="app-footer">
+  <p>&copy; 2025 SocketVerse. All rights reserved.</p>
+</footer>

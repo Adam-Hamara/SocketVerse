@@ -14,6 +14,9 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends CrudRepository<UserEntity, String> {
+    @Query(value = "SELECT u FROM UserEntity u WHERE u.uniqueId = :uniqueId")
+    Optional<UserEntity> findByUniqueId(@Param("uniqueId") String uniqueId);
+
     @Query(value = "SELECT u FROM UserEntity u WHERE u.email = :email")
-    Optional<UserEntity> findUserByEmail(@Param("email") String email);
+    Optional<UserEntity> findByEmail(@Param("email") String email);
 }

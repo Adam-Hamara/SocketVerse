@@ -25,9 +25,9 @@ public class MessageService implements IMessageService {
     private MessageRepository messageRepository;
 
     @Override
-    public void createMessage(String chatId, String userId, Message message) {
-        ChatEntity chat = chatRepository.findByChatId(chatId).orElseThrow();
-        UserEntity user = userRepository.findById(userId).orElseThrow();
+    public void createMessage(String chatUniqueId, String userUniqueId, Message message) {
+        ChatEntity chat = chatRepository.findByUniqueId(chatUniqueId).orElseThrow();
+        UserEntity user = userRepository.findByUniqueId(userUniqueId).orElseThrow();
         messageRepository.save(new MessageEntity(message, chat, user));
     }
 

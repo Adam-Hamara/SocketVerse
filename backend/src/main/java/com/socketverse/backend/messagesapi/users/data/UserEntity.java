@@ -1,6 +1,7 @@
 package com.socketverse.backend.messagesapi.users.data;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.socketverse.backend.helper.SecureRandomGenerator;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -14,6 +15,9 @@ public class UserEntity {
     @GeneratedValue
     @JsonProperty(value = "id")
     private Long id;
+
+    @JsonProperty(value = "unique_id")
+    private String uniqueId;
 
     @JsonProperty(value = "username")
     private String username;
@@ -33,6 +37,7 @@ public class UserEntity {
     public UserEntity(){}
 
     public UserEntity(User user){
+        this.uniqueId = SecureRandomGenerator.generateSecureUUID().toString();
         this.username = user.getUsername();
         this.firstname = user.getFirstname();
         this.lastname = user.getLastname();

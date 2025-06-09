@@ -24,17 +24,17 @@ public class ChatController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<?> getAllChats(@PathParam(value = "userId") String userId) {
+    @GetMapping("/{uniqueId}")
+    public ResponseEntity<?> getAllChats(@PathVariable("uniqueId") String uniqueId) {
 
-        List<ChatEntity> result = service.getAllChats(userId);
+        List<ChatEntity> result = service.getAllChats(uniqueId);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
-    @PutMapping("/{userId}")
-    public ResponseEntity<?> updateChat(@PathParam(value = "chatId") String chatId, @RequestBody Chat chat) {
+    @PutMapping
+    public ResponseEntity<?> updateChat(@RequestBody Chat chat) {
 
-        service.updateChat(chatId, chat);
+        service.updateChat(chat);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

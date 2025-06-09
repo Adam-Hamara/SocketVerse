@@ -1,0 +1,123 @@
+<div class="chat-layout">
+  <header class="chat-header">
+    <div class="app-title" (click)="goToHomePage()" style="cursor: pointer;">
+      ChatVerse
+    </div>
+
+    <div class="settings-menu">
+      <button
+        class="settings-button"
+        (click)="toggleSettings()"
+        [attr.aria-expanded]="isSettingsOpen"
+        aria-haspopup="true"
+        aria-label="Settings"
+        type="button"
+      >
+        <span class="settings-icon">⚙️</span>
+        <span class="settings-text">Settings</span>
+        <span class="arrow" [class.open]="isSettingsOpen">▼</span>
+      </button>
+
+      <ul
+        *ngIf="isSettingsOpen"
+        class="settings-dropdown"
+        role="menu"
+        aria-label="Settings menu"
+      >
+        <li role="menuitem">
+          <button class="dropdown-item" type="button">
+            <span class="icon">👤</span> Profile
+          </button>
+        </li>
+        <li role="menuitem">
+          <button class="dropdown-item" type="button">
+            <span class="icon">🔔</span> Notifications
+          </button>
+        </li>
+        <li role="separator" class="dropdown-divider"></li>
+        <li role="menuitem">
+          <button class="dropdown-item logout" type="button" (click)="onLogout()">
+            <span class="icon">🚪</span> Logout
+          </button>
+        </li>
+      </ul>
+    </div>
+  </header>
+
+  <div class="chat-main">
+    <div class="sidebar">
+        <!-- <div class="chat-heads">
+            <img src="https://i.pravatar.cc/40?img=1" alt="User 1" class="chat-avatar" />
+            <img src="https://i.pravatar.cc/40?img=2" alt="User 2" class="chat-avatar" />
+            <img src="https://i.pravatar.cc/40?img=3" alt="User 3" class="chat-avatar" />
+            <img src="https://i.pravatar.cc/40?img=4" alt="User 4" class="chat-avatar" />
+        </div> -->
+
+        <div class="search-wrapper">
+            <input 
+              type="text" 
+              placeholder="Search users..." 
+              class="search-input"
+              [(ngModel)]="searchText"
+              (input)="onSearchChange()"
+              aria-label="Search users"
+              autocomplete="off"
+            />
+            <button class="search-button" >
+                🔍
+            </button>
+        </div>
+        <div
+          class="search-results"
+          *ngIf="isFilteredUsersShown && filteredUsers.length > 0"
+          role="listbox"
+        >
+          <div
+            class="search-result"
+            *ngFor="let user of filteredUsers"
+            role="option"
+            tabindex="0"
+            (click)="newChatChosen(user)"
+          >
+            <div class="user-avatar" [ngClass]="{'initials': !user.avatar_url}">
+              <img *ngIf="user.avatar_url" [src]="user.avatar_url" [alt]="user.username" />
+              <span *ngIf="!user.avatar_url">{{ getInitials(user.username) }}</span>
+            </div>
+            <div class="user-name">{{ user.username }}</div>
+          </div>
+        </div>
+
+        <div class="chat-list">
+            <div *ngFor="let chat of chats" class="chat-item " [ngClass]="{'active': chat.uniqueId === selectedChat?.uniqueId}" (click) = "selectChat(chat)">
+                 <!-- 👤 Avatar logic -->
+                <div class="user-avatar" [ngClass]="{'initials': !getSenderFromChat(chat).avatar_url}">
+                    <img *ngIf="getSenderFromChat(chat).avatar_url" [src]="getSenderFromChat(chat).avatar_url" alt="Profile" />
+                    <span *ngIf="!getSenderFromChat(chat).avatar_url">{{ initials(getSenderFromChat(chat)) }}</span>
+                </div>
+                <div class="chat-item-info">
+                    <div class="chat-item-name">{{getSenderFromChat(chat).username}}</div>
+                    <div class="chat-item-last-message">Hey! Are we still meeting today?</div>
+                </div>
+                <div class="chat-item-time">2:15 PM</div>
+            </div>
+        </div>
+    </div>
+
+    <main class="chat-body">
+      <div class="chat-messages">
+        <div *ngFor="let message of messages" class="message"  
+          [ngClass]="{'outgoing': message.senderId === localUser?.unique_id, 'incoming': message.senderId !== localUser?.unique_id}"
+        >
+          {{message.text}}
+        </div>
+      </div>
+
+      <form class="chat-input" [formGroup] = "sendMessageForm">
+        <div class="search-wrapper">
+            <input type="text" placeholder="Send message..." class="search-input" formControlName="message"/>
+        </div>
+        <button class="send-button" type="submit" (click)="sendMessage()">Send</button>
+      </form>
+    </main>
+  </div>
+</div>

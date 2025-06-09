@@ -26,6 +26,8 @@ services:
       KEYCLOAK_ADMIN_PASSWORD: admin
     volumes:
       - keycloak_data:/opt/keycloak/data
+    depends_on:
+      - database
 
 volumes:
   db_data:
